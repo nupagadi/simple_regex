@@ -1,7 +1,9 @@
 #include <cassert>
 #include <cstdio>
+#include <cstring>
 
 #include "SolidPattern.h"
+#include "FloatingPattern.h"
 
 
 void SolidPatternInitTest1()
@@ -290,6 +292,18 @@ void SolidPatternSearchTest3()
    printf("SolidPatternSearchTest3 is OK\n");
 }
 
+void FloatingPatternTest()
+{
+   my_regex::FloatingPattern fp;
+   fp.Init("*qwe*asd*zxc*");
+   const char* str_pattern = nullptr;
+   fp.ToString(&str_pattern);
+   assert(str_pattern != nullptr);
+   assert(strlen(str_pattern) == 13);
+
+   printf("FloatingPatternTest is OK\n");
+}
+
 void RunTests()
 {
    SolidPatternInitTest1();
@@ -301,5 +315,7 @@ void RunTests()
    SolidPatternSearchTest1();
    SolidPatternSearchTest2();
    SolidPatternSearchTest3();
+
+   FloatingPatternTest();
 
 }

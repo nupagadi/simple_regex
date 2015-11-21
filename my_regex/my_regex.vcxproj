@@ -75,11 +75,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BM_strstr.cpp" />
+    <ClCompile Include="FloatingPattern.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SolidPattern.cpp" />
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FloatingPattern.h" />
     <ClInclude Include="SolidPattern.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -27,9 +27,15 @@
     <ClCompile Include="SolidPattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FloatingPattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SolidPattern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatingPattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
