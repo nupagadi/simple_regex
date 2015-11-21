@@ -12,9 +12,9 @@ public:
    SolidPatternAtom() : str_(), len_(), offset_() {}
    bool Init(const char* str, size_t len, size_t offset);
 
-   const char* str() { return str_; }
-   size_t len() { return len_; }
-   size_t offset() { return offset_; }
+   const char* str() const { return str_; }
+   size_t len() const { return len_; }
+   size_t offset() const { return offset_; }
    
 private:
    const char* str_; // letters only
@@ -31,20 +31,23 @@ class SolidPattern
 public:
    SolidPattern() : atoms_num_(), p_atoms_(), tail_len_(), offset_(), length_(), pattern_() {}
 
-   bool Reset(const char* source);
+   bool Reset(const char* source, size_t len = 0);
 
-   size_t AtomsNum() { return atoms_num_; }
-   size_t TailLen() { return tail_len_; }
-   size_t Offset() { return offset_; }
+   bool IsEqual(const char* str, size_t str_len) const;
+
+   size_t AtomsNum() const { return atoms_num_; }
+   size_t TailLen() const { return tail_len_; }
+   size_t Offset() const { return offset_; }
+   size_t Length() const { return length_; }
 
    // ptr = nullptr, if out of range
-   void GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset);
+   void GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset) const;
 
    //    void ToString() { for(size_t i = 0; i<atoms_num_; ++i) p_atoms_[i]; }
 
    // if len == 0, null-terminated string is required
    // return nullptr, if no occurrences
-   const char* FindIn(const char* str, size_t len = 0);
+   const char* FindIn(const char* str, size_t len = 0) const;
 
    ~SolidPattern() { delete [] p_atoms_; p_atoms_ = nullptr; }
 private:
@@ -56,7 +59,7 @@ private:
    char* pattern_;
 
    // check if str is equal to pattern except its first atom
-   bool isEqualPastTheFirst(const char* str);
+   bool isEqualPastTheFirst(const char* str) const;
    bool zeroAtomOperation();
 
    // non-copyable

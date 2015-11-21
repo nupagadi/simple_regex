@@ -11,16 +11,17 @@ const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat
 namespace my_regex
 {
 
-bool SolidPattern::Reset(const char* source)
+bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
 {
    offset_ = length_ = tail_len_ = atoms_num_ = 0;
-   length_ = strlen(source);
+   if(len)  length_ = len;
+   else  length_ = strlen(source);
 
    delete [] pattern_;
    pattern_ = new (std::nothrow) char[length_+1];
    if(!pattern_)  return false;
 
-   strcpy(pattern_, source);
+   strncpy(pattern_, source, length_+1);
 
    // '?' count
    size_t q_mark_num = 0;
@@ -32,8 +33,8 @@ bool SolidPattern::Reset(const char* source)
 
    if(!max_elem_num)
       return zeroAtomOperation();
-   //ÅÑËÈ ÂÎÏĞÎÑÎÂ ÍÎËÜ!!!!!!!!!!
-   //ÅÑËÈ ÁÓÊÂ ÍÎËÜ!!!!!!!!!!
+
+   //return false OPERATION!!!!!!!!!!
 
    // Íà÷àëà ıòèõ ó÷àñòêîâ
    size_t* starts = new (std::nothrow) size_t[max_elem_num];
@@ -74,7 +75,7 @@ bool SolidPattern::Reset(const char* source)
    return true;
 }
 
-void SolidPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset)
+void SolidPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset) const
 {
    if(num < atoms_num_)
    {
@@ -86,10 +87,11 @@ void SolidPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& of
 }
 
             // TUNE BM!!!!!!!!!!!!!!!!!
-const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/)
+const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/) const
 {
    if (!str_len)   str_len = strlen(str);
    if (str_len < length_) return nullptr;
+   // "????"-like pattern
    if (!atoms_num_)  return str;
    
    const char* entry = str;
@@ -110,7 +112,17 @@ const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/)
 }
 
             // TUNE BM!!!!!!!!!!!!!!!!!
-bool SolidPattern::isEqualPastTheFirst(const char* str)
+bool SolidPattern::IsEqual(const char* str, size_t str_len) const
+{
+   if (str_len < length_) return nullptr;
+   // "????"-like pattern
+   if (!atoms_num_)  return str;
+   if(strncmp(str + offset_, p_atoms_[0].str(), p_atoms_[0].len()))
+      return false;
+   return isEqualPastTheFirst(str);
+}
+
+bool SolidPattern::isEqualPastTheFirst(const char* str) const
 {
    size_t i = 1;
    for (; i < atoms_num_; ++i)

@@ -6,17 +6,35 @@ namespace my_regex
 class FloatingPattern
 {
 public:
-   FloatingPattern() : left_alligned_(), right_alligned_(), free_alligned_(), string_pattern_() {}
-   bool Init(const char* string_pattern);
+   FloatingPattern() : left_aligned_(), right_aligned_(), free_aligned_(), string_pattern_(), min_length_(), free_pat_num_() {}
+   bool Reset(const char* string_pattern);
 
-   // for debug
+   const char* FindIn(const char* str, size_t len = 0);
+
+   size_t MinLength() { return min_length_; }
+   size_t Offset() { return left_aligned_ ? left_aligned_->Length() : 0; }
+   size_t Tail() { return right_aligned_ ? right_aligned_->Length() : 0; }
+
+#ifdef _DEBUG 
    void ToString(const char** string_pattern) { *string_pattern = string_pattern_; }
+#endif
 
-   ~FloatingPattern() { delete left_alligned_;  delete right_alligned_;  delete [] free_alligned_; delete [] string_pattern_; }
+   ~FloatingPattern() {  }
+
 private:
-   SolidPattern *left_alligned_, *right_alligned_;
-   SolidPattern* free_alligned_; // array
+
+#ifdef _DEBUG 
+public:
+#endif
+
+   SolidPattern *left_aligned_, *right_aligned_;
+   SolidPattern* free_aligned_; // array
    char* string_pattern_;
+
+   size_t min_length_;
+   size_t free_pat_num_;
+
+   void free();
 };
 
 }  // namespace my_regex

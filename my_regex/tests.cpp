@@ -1,3 +1,5 @@
+#ifdef _DEBUG 
+
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -292,20 +294,121 @@ void SolidPatternSearchTest3()
    printf("SolidPatternSearchTest3 is OK\n");
 }
 
-void FloatingPatternTest()
+void FloatingPatternResetTest1()
 {
    my_regex::FloatingPattern fp;
-   fp.Init("*qwe*asd*zxc*");
+   fp.Reset("*qwe*asd*zxc*");
    const char* str_pattern = nullptr;
    fp.ToString(&str_pattern);
    assert(str_pattern != nullptr);
    assert(strlen(str_pattern) == 13);
+   assert(fp.MinLength() == 11);
 
-   printf("FloatingPatternTest is OK\n");
+   fp.Reset("***qwe****asd**zxc*");
+   str_pattern = nullptr;
+   fp.ToString(&str_pattern);
+   assert(str_pattern != nullptr);
+   assert(strlen(str_pattern) == 13);
+   assert(fp.MinLength() == 11);
+   assert(str_pattern[0] == '*');
+   assert(str_pattern[3] != '*');
+   assert(str_pattern[4] == '*');
+   assert(str_pattern[5] != '*');
+   assert(str_pattern[11] != '*');
+   assert(str_pattern[12] == '*');
+
+   fp.Reset("***");
+   str_pattern = nullptr;
+   fp.ToString(&str_pattern);
+   assert(str_pattern != nullptr);
+   assert(strlen(str_pattern) == 1);
+   assert(fp.MinLength() == 0);
+   assert(str_pattern[0] == '*');
+
+   printf("FloatingPatternResetTest1 is OK\n");
 }
+
+void FloatingPatternResetTest2()
+{
+   my_regex::FloatingPattern fp;
+   fp.Reset("*qwe*asd*zxc*");
+   assert(fp.left_aligned_ == nullptr);
+   assert(fp.right_aligned_ == nullptr);
+   assert(fp.free_pat_num_ == 3);
+
+   fp.Reset("***qwe****asd**zxc*");
+   assert(fp.left_aligned_ == nullptr);
+   assert(fp.right_aligned_ == nullptr);
+   assert(fp.free_pat_num_ == 3);
+
+   fp.Reset("***");
+   assert(fp.left_aligned_ == nullptr);
+   assert(fp.right_aligned_ == nullptr);
+   assert(fp.free_pat_num_ == 0);
+
+   fp.Reset("qwe****asd**zxc*");
+   assert(fp.left_aligned_ != nullptr);
+   assert(fp.right_aligned_ == nullptr);
+   assert(fp.free_pat_num_ == 2);
+
+   fp.Reset("*qwe****asd**zxc");
+   assert(fp.left_aligned_ == nullptr);
+   assert(fp.right_aligned_ != nullptr);
+   assert(fp.free_pat_num_ == 2);
+   assert(fp.Offset() == 0);
+   assert(fp.Tail() == 3);
+
+   fp.Reset("qwe****asd**zxc");
+   assert(fp.left_aligned_ != nullptr);
+   assert(fp.right_aligned_ != nullptr);
+   assert(fp.free_pat_num_ == 1);
+   assert(fp.Offset() == 3);
+
+   fp.Reset("???****asd**???");
+   assert(fp.left_aligned_ != nullptr);
+   assert(fp.right_aligned_ != nullptr);
+   assert(fp.free_pat_num_ == 1);
+   assert(fp.Offset() == 3);
+   assert(fp.Tail() == 3);
+
+   printf("FloatingPatternResetTest2 is OK\n");
+}
+
+void FloatingPatternSearchTest1()
+{
+   const char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
+
+   my_regex::FloatingPattern fp;
+   fp.Reset("The Boyer*asd*zxc*");
+   const char* res = fp.FindIn(text, 30);
+   assert(res != nullptr);
+   assert(res == text);
+
+   fp.Reset("The?Boye?*er ?ule?");
+   res = nullptr;
+   res = fp.FindIn(text);
+   assert(res != nullptr);
+   assert(res == text);
+
+   fp.Reset("The Boyer*er rule?");
+   res = nullptr;
+   res = fp.FindIn(text, strlen(text) -1);
+   assert(res == nullptr);
+   assert(res != text);
+
+   printf("FloatingPatternSearchTest1 is OK\n");
+}
+
+
+#endif
+
+
 
 void RunTests()
 {
+
+#ifdef _DEBUG 
+
    SolidPatternInitTest1();
    SolidPatternInitTest2();
    SolidPatternInitTest3();
@@ -316,6 +419,12 @@ void RunTests()
    SolidPatternSearchTest2();
    SolidPatternSearchTest3();
 
-   FloatingPatternTest();
+   FloatingPatternResetTest1();
+   FloatingPatternResetTest2();
+
+   FloatingPatternSearchTest1();
+
+#endif
 
 }
+
