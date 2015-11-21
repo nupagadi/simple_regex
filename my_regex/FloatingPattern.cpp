@@ -104,6 +104,14 @@ const char* FloatingPattern::FindIn(const char* str, size_t str_len/* = 0*/)
          return nullptr;
    }
 
+   const char* pos = str + Offset();
+   for(size_t i = 0; i < free_pat_num_; ++i)
+   {
+      pos = free_aligned_[i].FindIn(pos, str_len - (str-pos) - Tail());
+      if(!pos)  return nullptr;
+      pos += free_aligned_[i].Length();
+   }
+
    return str;
 
    //const char* entry = str;

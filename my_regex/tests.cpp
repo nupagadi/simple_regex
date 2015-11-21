@@ -379,7 +379,7 @@ void FloatingPatternSearchTest1()
    const char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
    my_regex::FloatingPattern fp;
-   fp.Reset("The Boyer*asd*zxc*");
+   fp.Reset("The Boyer**");
    const char* res = fp.FindIn(text, 30);
    assert(res != nullptr);
    assert(res == text);
@@ -390,6 +390,16 @@ void FloatingPatternSearchTest1()
    assert(res != nullptr);
    assert(res == text);
 
+   fp.Reset("he?Boye?*er ?ule?");
+   res = nullptr;
+   res = fp.FindIn(text);
+   assert(res == nullptr);
+
+   fp.Reset("The?Boye?*er ?ule");
+   res = nullptr;
+   res = fp.FindIn(text);
+   assert(res == nullptr);
+
    fp.Reset("The Boyer*er rule?");
    res = nullptr;
    res = fp.FindIn(text, strlen(text) -1);
@@ -397,6 +407,29 @@ void FloatingPatternSearchTest1()
    assert(res != text);
 
    printf("FloatingPatternSearchTest1 is OK\n");
+}
+
+void FloatingPatternSearchTest2()
+{
+   const char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
+
+   my_regex::FloatingPattern fp;
+   fp.Reset("The Boyer*algorithm*rule*");
+   const char* res = fp.FindIn(text);
+   assert(res != nullptr);
+   assert(res == text);
+
+   fp.Reset("The Boyer*algorthm*rule*");
+   res = nullptr;
+   res = fp.FindIn(text);
+   assert(res == nullptr);
+
+   fp.Reset("The Boyer*algor*thm*rule??");
+   res = nullptr;
+   res = fp.FindIn(text);
+   assert(res != nullptr);
+
+   printf("FloatingPatternSearchTest2 is OK\n");
 }
 
 
@@ -423,6 +456,7 @@ void RunTests()
    FloatingPatternResetTest2();
 
    FloatingPatternSearchTest1();
+   FloatingPatternSearchTest2();
 
 #endif
 
