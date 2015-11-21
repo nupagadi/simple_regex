@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <cassert>
 
-#include "MyRegex.h"
+#include "SolidPattern.h"
 
 const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat, uint32_t patlen);
 
@@ -11,7 +11,7 @@ const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat
 namespace my_regex
 {
 
-bool FixedPattern::Reset(const char* source)
+bool SolidPattern::Reset(const char* source)
 {
    offset_ = length_ = tail_len_ = atoms_num_ = 0;
    length_ = strlen(source);
@@ -58,7 +58,7 @@ bool FixedPattern::Reset(const char* source)
    tail_len_ = length_ - starts[atoms_num_-1] - lens[atoms_num_-1];
 
    delete [] p_atoms_;
-   p_atoms_ = new (std::nothrow) FixedPatternAtom[atoms_num_];
+   p_atoms_ = new (std::nothrow) SolidPatternAtom[atoms_num_];
    if(!p_atoms_)  return false;
 
    p_atoms_[0].Init(pattern_ + starts[0], lens[0], starts[0]);
@@ -71,7 +71,7 @@ bool FixedPattern::Reset(const char* source)
    return true;
 }
 
-void FixedPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset)
+void SolidPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset)
 {
    if(num < atoms_num_)
    {
@@ -83,7 +83,7 @@ void FixedPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& of
 }
 
             // TUNE BM!!!!!!!!!!!!!!!!!
-const char* FixedPattern::FindIn(const char* str, size_t str_len /*= 0*/)
+const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/)
 {
    if (!atoms_num_)  return nullptr;
    if (!str_len)   str_len = strlen(str);
@@ -106,7 +106,8 @@ const char* FixedPattern::FindIn(const char* str, size_t str_len /*= 0*/)
 
 }
 
-bool FixedPattern::isEqualPastTheFirst(const char* str)
+            // TUNE BM!!!!!!!!!!!!!!!!!
+bool SolidPattern::isEqualPastTheFirst(const char* str)
 {
    size_t i = 1;
    for (; i < atoms_num_; ++i)
@@ -121,7 +122,7 @@ bool FixedPattern::isEqualPastTheFirst(const char* str)
 
 
 
-bool FixedPatternAtom::Init(const char* str, size_t len, size_t offset)
+bool SolidPatternAtom::Init(const char* str, size_t len, size_t offset)
 {
    str_ = str;
    len_ = len;

@@ -1,13 +1,13 @@
 #include <cassert>
 #include <cstdio>
 
-#include "MyRegex.h"
+#include "SolidPattern.h"
 
 
-void FixedPatternInitTest1()
+void SolidPatternInitTest1()
 {
    char* text = "The Boyer–Moore–Horspool? algorithm is a simplification of the?? ???Boyer–Moore algorithm using only the bad character rule.";
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
 
    fpat.Reset(text);
 
@@ -49,12 +49,12 @@ void FixedPatternInitTest1()
 
    assert(p == '\0');
 
-   printf("FixedPatternInitTest1 is OK\n");
+   printf("SolidPatternInitTest1 is OK\n");
 }
-void FixedPatternInitTest2()
+void SolidPatternInitTest2()
 {
    char* text = "?????The Boyer–Moore–Horspool? algorithm is a simplification of the? Boyer–Moore algorithm using only the bad character rule.";
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
    fpat.Reset(text);
 
    assert(fpat.AtomsNum() == 3);
@@ -88,24 +88,24 @@ void FixedPatternInitTest2()
 
    assert(p == '\0');
 
-   printf("FixedPatternInitTest2 is OK\n");
+   printf("SolidPatternInitTest2 is OK\n");
 }
-void FixedPatternInitTest3()
+void SolidPatternInitTest3()
 {
    char* text = "The Boyer–Moore–Horspool? algorithm is a simplification of the? Boyer–Moore algorithm using only the bad character rule.???";
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
    fpat.Reset(text);
 
    assert(fpat.AtomsNum() == 3);
    assert(fpat.TailLen() == 3);
 
-   printf("FixedPatternInitTest3 is OK\n");
+   printf("SolidPatternInitTest3 is OK\n");
 }
 
-void FixedPatternInitTest4()
+void SolidPatternInitTest4()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
    fpat.Reset("??? Boyer–Moore–Horspool");
 
    assert(fpat.AtomsNum() == 1);
@@ -123,94 +123,94 @@ void FixedPatternInitTest4()
    assert(len == 21);
    assert(offset == 3);
 
-   printf("FixedPatternInitTest4 is OK\n");
+   printf("SolidPatternInitTest4 is OK\n");
 }
 
 
-void FixedPatternSearchTest1()
+void SolidPatternSearchTest1()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
    const char* entry;
 
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
    fpat.Reset("Boyer");
    entry = fpat.FindIn(text);
    assert(entry == text+4);
    assert(*entry == 'B');
 
-   my_regex::FixedPattern fpat3;
+   my_regex::SolidPattern fpat3;
    fpat3.Reset("Boyer");
    entry = fpat3.FindIn(text, 5);
    assert(entry == '\0');
 
-   my_regex::FixedPattern fpat2;
+   my_regex::SolidPattern fpat2;
    fpat2.Reset(".");
    entry = fpat2.FindIn(text);
    assert(*entry == '.');
 
-   my_regex::FixedPattern fpat4;
+   my_regex::SolidPattern fpat4;
    fpat4.Reset("simplificatin");
    entry = fpat4.FindIn(text);
    assert(entry == '\0');
 
-   printf("FixedPatternSearchTest1 is OK\n");
+   printf("SolidPatternSearchTest1 is OK\n");
 }
 
-void FixedPatternSearchTest2()
+void SolidPatternSearchTest2()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
    const char* entry;
 
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
    fpat.Reset("Bo?er");
    entry = fpat.FindIn(text);
    assert(*entry == 'B');
 
-   my_regex::FixedPattern fpat3;
+   my_regex::SolidPattern fpat3;
    fpat3.Reset("Bo?er–");
    entry = fpat3.FindIn(text, 5);
    assert(entry == '\0');
 
-   my_regex::FixedPattern fpat4;
+   my_regex::SolidPattern fpat4;
    fpat4.Reset("simplificati?n");
    entry = fpat4.FindIn(text);
    assert(*entry == 's');
 
-   printf("FixedPatternSearchTest2 is OK\n");
+   printf("SolidPatternSearchTest2 is OK\n");
 }
 
-void FixedPatternSearchTest3()
+void SolidPatternSearchTest3()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
    const char* entry;
 
-   my_regex::FixedPattern fpat;
+   my_regex::SolidPattern fpat;
    fpat.Reset("Boyer?Moore?Horspool");
    entry = fpat.FindIn(text);
    assert(*entry == 'B');
    assert(entry-text == 4);
 
-   my_regex::FixedPattern fpat3;
+   my_regex::SolidPattern fpat3;
    fpat3.Reset("Bo?er–");
    entry = fpat3.FindIn(text, 5);
    assert(entry == '\0');
 
-   my_regex::FixedPattern fpat4;
+   my_regex::SolidPattern fpat4;
    fpat4.Reset("simp???icati?n");
    entry = fpat4.FindIn(text);
    assert(*entry == 's');
 
-   my_regex::FixedPattern fpat5;
+   my_regex::SolidPattern fpat5;
    fpat5.Reset("??simp???icati?n");
    entry = fpat5.FindIn(text);
    assert(entry != '\0');
    assert(*entry != 's');
    assert(*entry == 'a');
 
-   my_regex::FixedPattern fpat6;
+   my_regex::SolidPattern fpat6;
    fpat6.Reset("??simp???icati?n????");
    entry = fpat6.FindIn(text);
    assert(entry != '\0');
@@ -218,7 +218,7 @@ void FixedPatternSearchTest3()
    assert(*entry != 's');
    assert(*entry == 'a');
 
-   my_regex::FixedPattern fpat7;
+   my_regex::SolidPattern fpat7;
    fpat7.Reset("rule??");
    entry = fpat7.FindIn(text);
    assert(entry == '\0');
@@ -245,18 +245,18 @@ void FixedPatternSearchTest3()
    assert(entry-text == 74);
    assert(*entry == 'a');
 
-   printf("FixedPatternSearchTest3 is OK\n");
+   printf("SolidPatternSearchTest3 is OK\n");
 }
 
 void RunTests()
 {
-   FixedPatternInitTest1();
-   FixedPatternInitTest2();
-   FixedPatternInitTest3();
-   FixedPatternInitTest4();
+   SolidPatternInitTest1();
+   SolidPatternInitTest2();
+   SolidPatternInitTest3();
+   SolidPatternInitTest4();
 
-   FixedPatternSearchTest1();
-   FixedPatternSearchTest2();
-   FixedPatternSearchTest3();
+   SolidPatternSearchTest1();
+   SolidPatternSearchTest2();
+   SolidPatternSearchTest3();
 
 }

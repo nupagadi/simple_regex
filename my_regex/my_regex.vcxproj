@@ -76,11 +76,11 @@
   <ItemGroup>
     <ClCompile Include="BM_strstr.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyRegex.cpp" />
+    <ClCompile Include="SolidPattern.cpp" />
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyRegex.h" />
+    <ClInclude Include="SolidPattern.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

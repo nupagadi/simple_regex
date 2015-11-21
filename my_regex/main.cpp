@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <new>
 
-#include "MyRegex.h"
 
 void RunTests();
 

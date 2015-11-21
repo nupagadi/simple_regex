@@ -5,11 +5,11 @@
 
 namespace my_regex
 {
-
-class FixedPatternAtom
+// set of letters only, with its length and offset of '?'
+class SolidPatternAtom
 {
 public:
-   FixedPatternAtom() : str_(), len_(), offset_() {}
+   SolidPatternAtom() : str_(), len_(), offset_() {}
    bool Init(const char* str, size_t len, size_t offset);
 
    const char* str() { return str_; }
@@ -17,18 +17,19 @@ public:
    size_t offset() { return offset_; }
    
 private:
-   const char* str_;
-   size_t len_;
-   size_t offset_;
+   const char* str_; // letters only
+   size_t len_;      // lenght of str
+   size_t offset_;   // preceding '?' count
 
    // non-copyable
-   FixedPatternAtom(const FixedPatternAtom&);
-   FixedPatternAtom& operator=(const FixedPatternAtom&);
+   SolidPatternAtom(const SolidPatternAtom&);
+   SolidPatternAtom& operator=(const SolidPatternAtom&);
 };
-class FixedPattern
+
+class SolidPattern
 {
 public:
-   FixedPattern() : atoms_num_(), p_atoms_(), tail_len_(), offset_(), length_(), pattern_() {}
+   SolidPattern() : atoms_num_(), p_atoms_(), tail_len_(), offset_(), length_(), pattern_() {}
 
    bool Reset(const char* source);
 
@@ -45,10 +46,10 @@ public:
    // return nullptr, if no occurrences
    const char* FindIn(const char* str, size_t len = 0);
 
-   ~FixedPattern() { delete [] p_atoms_; p_atoms_ = nullptr; }
+   ~SolidPattern() { delete [] p_atoms_; p_atoms_ = nullptr; }
 private:
    size_t atoms_num_;
-   FixedPatternAtom* p_atoms_;
+   SolidPatternAtom* p_atoms_;
    size_t tail_len_;
    size_t offset_;
    size_t length_;
@@ -58,8 +59,8 @@ private:
    bool isEqualPastTheFirst(const char* str);
 
    // non-copyable
-   FixedPattern(const FixedPattern&);
-   FixedPattern& operator=(const FixedPattern&);
+   SolidPattern(const SolidPattern&);
+   SolidPattern& operator=(const SolidPattern&);
 
 };
 
