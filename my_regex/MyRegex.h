@@ -54,6 +54,9 @@ private:
    size_t length_;
    char* pattern_;
 
+   // check if str is equal to pattern except its first atom
+   bool isEqualPastTheFirst(const char* str);
+
    // non-copyable
    FixedPattern(const FixedPattern&);
    FixedPattern& operator=(const FixedPattern&);

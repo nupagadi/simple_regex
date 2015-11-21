@@ -100,20 +100,21 @@ const char* FixedPattern::FindIn(const char* str, size_t str_len /*= 0*/)
       // tail of pattern goes out of the end of str
       if (str_len - (entry-str) < length_) return nullptr;
       
-      size_t i = 1;
-      for (; i < atoms_num_; ++i)
-         if (strncmp(entry + (p_atoms_[i-1].str() - p_atoms_[0].str()) + p_atoms_[i-1].len() + p_atoms_[i].offset(), p_atoms_[i].str(), p_atoms_[i].len()))
-         {
-            // TUNE BM!!!!!!!!!!!!!!!!!
-            ++entry;  break;
-         }
-
-      if(i == atoms_num_)
-         return entry-offset_;
+      if(isEqualPastTheFirst(entry))   return  entry-offset_;
+      else  ++entry;
    }
 
 }
 
+bool FixedPattern::isEqualPastTheFirst(const char* str)
+{
+   size_t i = 1;
+   for (; i < atoms_num_; ++i)
+      if (strncmp(str + (p_atoms_[i-1].str() - p_atoms_[0].str()) + p_atoms_[i-1].len() + p_atoms_[i].offset(), p_atoms_[i].str(), p_atoms_[i].len()))
+         return false;
+
+   return true;   
+}
 
 
 
