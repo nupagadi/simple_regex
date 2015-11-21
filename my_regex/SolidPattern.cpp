@@ -17,10 +17,12 @@ bool SolidPattern::Reset(const char* source)
    length_ = strlen(source);
 
    delete [] pattern_;
-   pattern_ = new char[length_+1];
+   pattern_ = new (std::nothrow) char[length_+1];
+   if(!pattern_)  return false;
+
    strcpy(pattern_, source);
 
-   // Количество '?'
+   // '?' count
    size_t q_mark_num = 0;
    for(const char* pos = pattern_; *pos; q_mark_num += (*pos++=='?') );
 
@@ -28,7 +30,8 @@ bool SolidPattern::Reset(const char* source)
    // например, в zxc??xs????sdd? три таких участка
    size_t max_elem_num = min(q_mark_num + 1, length_ - q_mark_num);
 
-
+   if(!max_elem_num)
+      return zeroAtomOperation();
    //ЕСЛИ ВОПРОСОВ НОЛЬ!!!!!!!!!!
    //ЕСЛИ БУКВ НОЛЬ!!!!!!!!!!
 
@@ -40,7 +43,7 @@ bool SolidPattern::Reset(const char* source)
    if(!lens)  return false;
 
    const char* pos = pattern_;
-   for (size_t i = 0, &j = atoms_num_; pattern_[i] != '\0'; ++i, ++pos)
+   for (size_t i = 0, &j = atoms_num_; pattern_[i]; ++i, ++pos)
    {
       pos = strchr(pos, '?');
 
@@ -85,9 +88,9 @@ void SolidPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& of
             // TUNE BM!!!!!!!!!!!!!!!!!
 const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/)
 {
-   if (!atoms_num_)  return nullptr;
    if (!str_len)   str_len = strlen(str);
    if (str_len < length_) return nullptr;
+   if (!atoms_num_)  return str;
    
    const char* entry = str;
    while(true)
@@ -117,7 +120,18 @@ bool SolidPattern::isEqualPastTheFirst(const char* str)
    return true;   
 }
 
+bool SolidPattern::zeroAtomOperation()
+{
+   //offset_ = length_ = tail_len_ = atoms_num_ = 0;
+   //length_ = strlen(source);
+   
+   tail_len_ = length_;
 
+   delete [] p_atoms_;
+   p_atoms_ = nullptr;
+
+   return true;
+}
 
 
 

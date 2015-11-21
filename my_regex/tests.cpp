@@ -126,6 +126,42 @@ void SolidPatternInitTest4()
    printf("SolidPatternInitTest4 is OK\n");
 }
 
+void SolidPatternInitTest5()
+{
+   const char* text = "Boyer";
+   my_regex::SolidPattern fpat;
+   fpat.Reset(text);
+
+   assert(fpat.AtomsNum() == 1);
+   assert(fpat.TailLen() == 0);
+   assert(fpat.Offset() == 0);
+
+   const char* p = nullptr;
+   size_t len;
+   size_t offset;
+   fpat.GetAtom(0, &p, len, offset);
+
+   assert(p != '\0');
+   assert(p != text);
+   assert(*p == 'B');
+   assert(p[4] == 'r');
+   assert(len == 5);
+   assert(offset == 0);
+
+
+   const char* text2 = "????";
+   fpat.Reset(text2);
+
+   assert(fpat.AtomsNum() == 0);
+   assert(fpat.TailLen() == 4);
+   assert(fpat.Offset() == 0);
+
+   fpat.GetAtom(0, &p, len, offset);
+
+   assert(p == '\0');
+
+   printf("SolidPatternInitTest5 is OK\n");
+}
 
 void SolidPatternSearchTest1()
 {
@@ -245,6 +281,12 @@ void SolidPatternSearchTest3()
    assert(entry-text == 74);
    assert(*entry == 'a');
 
+   fpat7.Reset("???");
+   entry = fpat7.FindIn(text);
+   assert(entry != '\0');
+   assert(entry-text == 0);
+   assert(*entry == 'T');
+
    printf("SolidPatternSearchTest3 is OK\n");
 }
 
@@ -254,6 +296,7 @@ void RunTests()
    SolidPatternInitTest2();
    SolidPatternInitTest3();
    SolidPatternInitTest4();
+   SolidPatternInitTest5();
 
    SolidPatternSearchTest1();
    SolidPatternSearchTest2();

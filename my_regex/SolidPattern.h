@@ -57,6 +57,7 @@ private:
 
    // check if str is equal to pattern except its first atom
    bool isEqualPastTheFirst(const char* str);
+   bool zeroAtomOperation();
 
    // non-copyable
    SolidPattern(const SolidPattern&);
