@@ -2,9 +2,11 @@
 
 #define min(a, b) ((a < b) ? a : b)
 
-
 namespace my_regex
 {
+
+class BM_Searcher;
+
 // set of letters only, with its length and offset of '?'
 class SolidPatternAtom
 {
@@ -29,7 +31,7 @@ private:
 class SolidPattern
 {
 public:
-   SolidPattern() : atoms_num_(), p_atoms_(), tail_len_(), offset_(), length_(), pattern_() {}
+   SolidPattern() : atoms_num_(), p_atoms_(), tail_len_(), offset_(), length_(), pattern_(), searcher_() {}
 
    bool Reset(const char* source, size_t len = 0);
 
@@ -49,18 +51,21 @@ public:
    // return nullptr, if no occurrences
    const char* FindIn(const char* str, size_t len = 0) const;
 
-   ~SolidPattern() { delete [] p_atoms_; p_atoms_ = nullptr; }
+   ~SolidPattern() { free(); }
 private:
    size_t atoms_num_;
    SolidPatternAtom* p_atoms_;
-   size_t tail_len_;
-   size_t offset_;
-   size_t length_;
+   size_t tail_len_; // following "???"
+   size_t offset_;   // preceding "???"
+   size_t length_;   // length of pattern_
    char* pattern_;
+   BM_Searcher* searcher_;
 
    // check if str is equal to pattern except its first atom
    bool isEqualPastTheFirst(const char* str) const;
    bool zeroAtomOperation();
+   void free();
+   bool resetSearher();
 
    // non-copyable
    SolidPattern(const SolidPattern&);

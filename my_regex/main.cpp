@@ -14,7 +14,6 @@ void RunTests();
 
 // smart memory allocating in BM
 // free memory in case of fail in SolidPattern inition
-// smart memory allocating in SolidPattern Reset
 
 
 int main()

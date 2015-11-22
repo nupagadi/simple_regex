@@ -15,9 +15,8 @@ void SolidPatternInitTest1()
 {
    char* text = "The Boyer–Moore–Horspool? algorithm is a simplification of the?? ???Boyer–Moore algorithm using only the bad character rule.";
    my_regex::SolidPattern fpat;
-
+   
    fpat.Reset(text);
-
    assert(fpat.AtomsNum() == 4);
    assert(fpat.TailLen() == 0);
    assert(fpat.Offset() == 0);
@@ -541,6 +540,8 @@ void FileSearchingTest2()
 }
 #endif
 
+#ifndef _DEBUG
+
 void FileSearchingReleaseTest1()
 {
    time_t start = time(nullptr);
@@ -618,7 +619,7 @@ void FileSearchingReleaseTest1()
    printf("FileSearchingReleaseTest1 is OK\n");
 }
 
-
+#endif
 
 
 
@@ -650,7 +651,11 @@ void RunTests()
 
 #endif
 
+#ifndef _DEBUG
+
    FileSearchingReleaseTest1();
+
+#endif
 
 }
 

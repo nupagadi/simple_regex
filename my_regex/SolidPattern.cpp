@@ -4,8 +4,9 @@
 #include <cassert>
 
 #include "SolidPattern.h"
+#include "BM_Searcher.h"
 
-const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat, uint32_t patlen);
+//const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat, uint32_t patlen);
 
 
 namespace my_regex
@@ -19,9 +20,11 @@ bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
 
    delete [] pattern_;
    pattern_ = new (std::nothrow) char[length_+1];
-   if(!pattern_)  return false;
+   if(!pattern_)  { free();  return false; }
 
-   strncpy(pattern_, source, length_+1);
+   strncpy(pattern_, source, length_);
+   pattern_[length_] = '\0';
+
 
    // '?' count
    size_t q_mark_num = 0;
@@ -34,14 +37,13 @@ bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
    if(!max_elem_num)
       return zeroAtomOperation();
 
-   //return false OPERATION!!!!!!!!!!
 
    // Beginnings of the sections
    size_t* starts = new (std::nothrow) size_t[max_elem_num];
-   if(!starts)  return false;
+   if(!starts)  { free();  return false; }
    // Lengths of the sections
    size_t* lens = new (std::nothrow) size_t[max_elem_num];
-   if(!lens)  return false;
+   if(!lens)  { free();  return false; }
 
    const char* pos = pattern_;
    for (size_t i = 0, &j = atoms_num_; pattern_[i]; ++i, ++pos)
@@ -63,7 +65,7 @@ bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
 
    delete [] p_atoms_;
    p_atoms_ = new (std::nothrow) SolidPatternAtom[atoms_num_];
-   if(!p_atoms_)  return false;
+   if(!p_atoms_)  { free();  return false; }
 
    p_atoms_[0].Init(pattern_ + starts[0], lens[0], starts[0]);
    for (size_t i = 1; i < atoms_num_; ++i)
@@ -72,8 +74,21 @@ bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
    delete [] lens;
    delete [] starts;
 
+   if(!resetSearher())  { free();  return false; }
+
    return true;
 }
+
+bool SolidPattern::resetSearher()
+{
+   delete searcher_;  searcher_ = nullptr;
+   searcher_ = new (std::nothrow) BM_Searcher;
+   if(!searcher_) return false;
+   return searcher_->Reset(p_atoms_[0].str(), p_atoms_[0].len());   
+
+   return true;
+}
+
 
 void SolidPattern::GetAtom(size_t num, const char** ptr, size_t& len, size_t& offset) const
 {
@@ -97,7 +112,8 @@ const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/) const
    const char* entry = str;
    while(true)
    {
-      entry = boyer_moore(entry, str_len-(entry-str), p_atoms_[0].str(), p_atoms_[0].len());
+      //entry = boyer_moore(entry, str_len-(entry-str), p_atoms_[0].str(), p_atoms_[0].len());
+      entry = searcher_->FindIn(entry, str_len-(entry-str));
       // nothing was found
       if (!entry)  return nullptr;
       // superfluous?
@@ -145,6 +161,13 @@ bool SolidPattern::zeroAtomOperation()
    return true;
 }
 
+void SolidPattern::free()
+{
+   delete searcher_; searcher_ = nullptr;
+   delete [] p_atoms_; p_atoms_ = nullptr;
+   delete [] pattern_; pattern_ = nullptr;
+   atoms_num_ = tail_len_ = offset_ = length_ = 0;
+}
 
 
 

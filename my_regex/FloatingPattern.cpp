@@ -65,7 +65,8 @@ bool FloatingPattern::Reset(const char* string_pattern)
       prev = pos;
       pos = strchr(pos, '*');
       if(!pos) pos = prev;  // so (pos-prev) == 0
-      left_aligned_->Reset(prev, pos-prev);
+      if(!left_aligned_->Reset(prev, pos-prev))
+      { free(); return false; }
    }
    assert(!asterisk_num || *pos == '*');
    for(size_t i = 0; i < free_pat_num_; ++i)
@@ -73,7 +74,8 @@ bool FloatingPattern::Reset(const char* string_pattern)
       prev = ++pos;
       pos = strchr(pos, '*');
       if(!pos) pos = prev;  // so (pos-prev) == 0
-      free_aligned_[i].Reset(prev, pos-prev);
+      if(!free_aligned_[i].Reset(prev, pos-prev))
+      { free(); return false; }
    }
    assert(!asterisk_num || *pos == '*');
    if(right_aligned_)
@@ -81,7 +83,8 @@ bool FloatingPattern::Reset(const char* string_pattern)
       prev = ++pos;
       pos = strchr(pos, '*');
       if(!pos) pos = prev;  // so (pos-prev) == 0
-      right_aligned_->Reset(prev, pos-prev);
+      if(!right_aligned_->Reset(prev, pos-prev))
+      { free(); return false; }
    }
 
    return true;
@@ -115,27 +118,14 @@ const char* FloatingPattern::DoesMatch(const char* str, size_t str_len/* = 0*/)
 
    return str;
 
-   //const char* entry = str;
-   //while(true)
-   //{
-   //   entry = boyer_moore(entry, str_len-(entry-str), p_atoms_[0].str(), p_atoms_[0].len());
-   //   // nothing was found
-   //   if (!entry)  return nullptr;
-   //   // superfluous?
-   ////    if (entry-str < offset_) return nullptr;
-   //   // tail of pattern goes out of the end of str
-   //   if (str_len - (entry-str) < length_) return nullptr;
-   //   
-   //   if(isEqualPastTheFirst(entry))   return  entry-offset_;
-   //   else  ++entry;
-   //}
-
 }
 
 void FloatingPattern::free()
 {
-   min_length_ = 0;
-   delete left_aligned_;  delete right_aligned_;  delete [] free_aligned_; delete [] string_pattern_; 
+   min_length_ = free_pat_num_ = 0;
+   if(!left_aligned_)  delete left_aligned_;  
+   if(!right_aligned_)  delete right_aligned_;     
+   delete [] free_aligned_;  delete [] string_pattern_; 
    left_aligned_ = right_aligned_ = free_aligned_ = nullptr;
    string_pattern_ = nullptr;
 }

@@ -74,6 +74,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BM_Searcher.cpp" />
     <ClCompile Include="BM_strstr.cpp" />
     <ClCompile Include="FloatingPattern.cpp" />
     <ClCompile Include="main.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BM_Searcher.h" />
     <ClInclude Include="FloatingPattern.h" />
     <ClInclude Include="SolidPattern.h" />
   </ItemGroup>

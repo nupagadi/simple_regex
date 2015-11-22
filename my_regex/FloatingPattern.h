@@ -2,6 +2,9 @@
 
 namespace my_regex
 {
+
+class SolidPattern;
+
 // pattern consists of SolidPattern instances, may contain '*'
 class FloatingPattern
 {
@@ -19,7 +22,7 @@ public:
    void ToString(const char** string_pattern) { *string_pattern = string_pattern_; }
 #endif
 
-   ~FloatingPattern() {  }
+   ~FloatingPattern() { free(); }
 
 private:
 
