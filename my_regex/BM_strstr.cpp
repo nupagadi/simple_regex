@@ -1,4 +1,4 @@
-#include <stdint.h>
+//#include <stdint.h>
 #include <stdlib.h>
 
 
@@ -14,13 +14,13 @@
 // needed to shift pat forward to get string[i] lined up 
 // with some character in pat.
 // this algorithm runs in alphabet_len+patlen time.
-void make_delta1(int *delta1, const char *pat, int32_t patlen) {
+void make_delta1(int *delta1, const char *pat, size_t patlen) {
    int i;
    for (i=0; i < ALPHABET_LEN; i++) {
       delta1[i] = NOT_FOUND;
    }
    for (i=0; i < patlen-1; i++) {
-      delta1[pat[i]] = patlen-1 - i;
+      delta1[static_cast<unsigned char>(pat[i])] = patlen-1 - i;
    }
 }
 
@@ -83,7 +83,7 @@ int suffix_length(const char *word, int wordlen, int pos) {
 // The second loop addresses case 2. Since suffix_length may not be
 // unique, we want to take the minimum value, which will tell us
 // how far away the closest potential match is.
-void make_delta2(int *delta2, const char *pat, int32_t patlen) {
+void make_delta2(int *delta2, const char *pat, size_t patlen) {
    int p;
    int last_prefix_index = patlen-1;
 
@@ -104,13 +104,37 @@ void make_delta2(int *delta2, const char *pat, int32_t patlen) {
    }
 }
 
-const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat, uint32_t patlen) {
-   int i;
-   int delta1[ALPHABET_LEN];
-   int *delta2 = (int *)malloc(patlen * sizeof(int));
-   make_delta1(delta1, pat, patlen);
-   make_delta2(delta2, pat, patlen);
+//const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat, uint32_t patlen) {
+//   int i;
+//   int delta1[ALPHABET_LEN];
+//   int *delta2 = (int *)malloc(patlen * sizeof(int));
+//   make_delta1(delta1, pat, patlen);
+//   make_delta2(delta2, pat, patlen);
+//
+//   // The empty pattern must be considered specially
+//   if (patlen == 0) return string;
+//
+//   i = patlen-1;
+//   while (i < stringlen) {
+//      int j = patlen-1;
+//      while (j >= 0 && (string[i] == pat[j])) {
+//         --i;
+//         --j;
+//      }
+//      if (j < 0) {
+//         free(delta2);
+//         return (string + i+1);
+//      }
+//
+//      i += max(delta1[string[i]], delta2[j]);
+//   }
+//   free(delta2);
+//   return NULL;
+//}
 
+const char* boyer_moore(const char *string, size_t stringlen, const char *pat, size_t patlen, int* delta1, int* delta2) 
+{
+   int i;
    // The empty pattern must be considered specially
    if (patlen == 0) return string;
 
@@ -122,12 +146,12 @@ const char* boyer_moore (const char *string, uint32_t stringlen, const char *pat
          --j;
       }
       if (j < 0) {
-         free(delta2);
          return (string + i+1);
       }
 
       i += max(delta1[string[i]], delta2[j]);
    }
-   free(delta2);
-   return NULL;
+
+   return nullptr;
 }
+

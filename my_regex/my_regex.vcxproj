@@ -38,7 +38,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -74,13 +74,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BM_Searcher.cpp" />
     <ClCompile Include="BM_strstr.cpp" />
+    <ClCompile Include="CLogReader.cpp" />
+    <ClCompile Include="FloatingPattern.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyRegex.cpp" />
+    <ClCompile Include="SolidPattern.cpp" />
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyRegex.h" />
+    <ClInclude Include="BM_Searcher.h" />
+    <ClInclude Include="CLogReader.h" />
+    <ClInclude Include="FloatingPattern.h" />
+    <ClInclude Include="SolidPattern.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
