@@ -15,6 +15,7 @@
 
 #include "SolidPattern.h"
 #include "FloatingPattern.h"
+#include "CLogReader.h"
 
 #define ISOK(b) (b ? "is OK" : "failed")
 
@@ -929,7 +930,7 @@ void MapViewSearchingReleaseTest1()
 
    // Remove trailing zero character added earlier.
    //SetFilePointer(hFile, dwFileSize, NULL, FILE_BEGIN);
-   SetEndOfFile(hFile);
+   //SetEndOfFile(hFile);
    CloseHandle(hFile);
 
    time_t end = time(nullptr);
@@ -937,6 +938,57 @@ void MapViewSearchingReleaseTest1()
 
    printf("MapViewSearchingReleaseTest1 is OK\n");
 
+}
+
+void CLogReaderTest1()
+{
+   const size_t max_line_size = 256*256;
+   char buffer[max_line_size];
+
+   time_t start = time(nullptr);
+
+   my_regex::CLogReader log_reader;
+   if(!log_reader.Open("animals.txt"))
+      printf("Error opening file\n");
+
+
+   log_reader.SetFilter("B237708F-6CFD-4972-9CE1-21AAF2B2E0A0");
+
+   while(log_reader.GetNextLine(buffer, max_line_size))
+   {
+      printf("line: %s\n", buffer);
+   }
+
+
+   log_reader.SetFilter("*98415C59-14AD-4A28-94D1-9551E3775C2C*");
+
+   while(log_reader.GetNextLine(buffer, max_line_size))
+   {
+      printf("line: %s\n", buffer);
+   }
+
+
+   log_reader.SetFilter("*98415C59*14AD-????-94D1*9551E3775C2C*");
+
+   while(log_reader.GetNextLine(buffer, max_line_size))
+   {
+      printf("line: %s\n", buffer);
+   }
+
+
+   log_reader.SetFilter("*98415C59-14AD-4A28-94D1??9551E3775C2C*");
+
+   while(log_reader.GetNextLine(buffer, max_line_size))
+   {
+      printf("line: %s\n", buffer);
+   }
+
+   time_t end = time(nullptr);
+   printf("%ds elapsed\n", end-start);
+
+   log_reader.Close();
+
+   printf("CLogReaderTest1 is OK\n");
 }
 
 #endif
@@ -973,8 +1025,9 @@ void RunTests()
 
 #ifndef _DEBUG
 
-   FileSearchingReleaseTest1();
+   //FileSearchingReleaseTest1();
    MapViewSearchingReleaseTest1();
+   CLogReaderTest1();
 #endif
 
 }

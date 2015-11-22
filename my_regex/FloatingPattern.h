@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SolidPattern.h"
+
 namespace my_regex
 {
 
