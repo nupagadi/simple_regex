@@ -4,6 +4,15 @@
 #include <cstring>
 #include <ctime>
 
+//#include "CmnHdr.h"
+//#include <windowsx.h>
+//#include <tchar.h>
+//#include <commdlg.h>
+//#include <cstring>
+//#include "Resource.h"
+#include <Windows.h>
+
+
 #include "SolidPattern.h"
 #include "FloatingPattern.h"
 
@@ -538,6 +547,139 @@ void FileSearchingTest2()
 
    printf("FileSearchingTest2 is OK\n");
 }
+void MapViewSearchingTest1()
+{
+   const size_t max_line_size = 256*256;
+
+   HANDLE hFile = CreateFile(L"small_file.txt", GENERIC_READ, 0, 
+      NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+   if (hFile == INVALID_HANDLE_VALUE) {
+      assert(false);
+      //chMB("File could not be opened.");
+      //return(FALSE);
+   }
+
+   DWORD dwFileSize = GetFileSize(hFile, NULL);
+
+   HANDLE hFileMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 
+      0, /*dwFileSize + sizeof(WCHAR)*/0, NULL);
+
+   if (hFileMap == NULL) {
+      //chMB("File map could not be opened.");
+      assert(false);
+      CloseHandle(hFile);
+      //return(FALSE);
+   }
+
+   PVOID pvFile = MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 0);
+
+   if (pvFile == NULL) {
+      //chMB("Could not map view of file.");
+      assert(false);
+      CloseHandle(hFileMap);
+      CloseHandle(hFile);
+      //return(FALSE);
+   }
+   PSTR pchANSI = (PSTR) pvFile;
+
+
+   char *pch = pchANSI, *ends = pch;
+
+   my_regex::FloatingPattern fp;
+   fp.Reset("*shift*,*P**");
+   bool isOK = false;
+
+   while (pch != NULL)
+   {
+      ends = strstr(pch,"\r\n");
+
+      isOK = fp.DoesMatch(pch, (ends?ends:pch) - pch);
+
+      if(isOK)  break;
+
+      pch = ends ? ends+2 : nullptr;
+   }
+
+   assert(isOK);     
+   //assert(feof(p_file));     
+
+   //fgets(line, max_line_size, pchANSI);
+
+
+   UnmapViewOfFile(pvFile);
+   CloseHandle(hFileMap);
+
+   // Remove trailing zero character added earlier.
+   SetFilePointer(hFile, dwFileSize, NULL, FILE_BEGIN);
+   SetEndOfFile(hFile);
+   CloseHandle(hFile);
+
+   /*
+   FILE *p_file;
+   p_file = fopen("small_file.txt", "r");
+   assert(p_file);
+   char line[max_line_size];
+
+   bool isOK = false;
+   my_regex::FloatingPattern fp;
+   fp.Reset("*shift*,*P**");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(isOK);     
+   assert(feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("?ore*=*moving*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(isOK);     
+   assert(!feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("**********************k********************************=******************************n*************************");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(isOK);     
+   assert(!feof(p_file));     
+
+
+   fp.Reset("*k??=??n*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(!isOK);     
+   assert(feof(p_file));     
+
+
+   fclose(p_file);
+   */
+   printf("MapViewSearchingTest1 is OK\n");
+}
+
+
+
 #endif
 
 #ifndef _DEBUG
@@ -611,6 +753,8 @@ void FileSearchingReleaseTest1()
    assert(!isOK);     
    assert(feof(p_file));     
 
+   fclose(p_file);
+
 
    time_t end = time(nullptr);
    printf("%ds elapsed\n", end-start);
@@ -619,8 +763,183 @@ void FileSearchingReleaseTest1()
    printf("FileSearchingReleaseTest1 is OK\n");
 }
 
-#endif
 
+void MapViewSearchingReleaseTest1()
+{
+   const size_t max_line_size = 256*256;
+   char line[max_line_size];
+
+   time_t start = time(nullptr);
+
+   HANDLE hFile = CreateFile(L"animals.txt", GENERIC_READ, 0, 
+      NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+   if (hFile == INVALID_HANDLE_VALUE) {
+      assert(false);
+      //chMB("File could not be opened.");
+      //return(FALSE);
+      return;
+   }
+
+   printf("File opened\n");
+
+   DWORD dwFileSize = GetFileSize(hFile, NULL);
+   printf("File size: %d\n", dwFileSize);
+
+   HANDLE hFileMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 
+      0, /*dwFileSize + sizeof(WCHAR)*/0, NULL);
+
+   if (hFileMap == NULL) {
+      //chMB("File map could not be opened.");
+      assert(false);
+      CloseHandle(hFile);
+      //return(FALSE);
+      return;
+   }
+   printf("Mapping created\n");
+
+   PVOID pvFile = MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 0);
+
+   if (pvFile == NULL) {
+      //chMB("Could not map view of file.");
+      assert(false);
+      CloseHandle(hFileMap);
+      CloseHandle(hFile);
+      //return(FALSE);
+      return;
+   }
+   PSTR pchANSI = (PSTR) pvFile;
+   //pchANSI[dwFileSize / sizeof(CHAR)] = '\0';
+
+   printf("Mapping started\n");
+
+
+   char *pch = pchANSI, *ends = pch;
+
+   my_regex::FloatingPattern fp;
+   fp.Reset("*98415C59-14AD-4A28-94D1-9551E3775C2C*");
+   bool isOK = false;
+
+   while (pch != NULL)
+   {
+      ends = strstr(pch,"\r\n");
+      while(ends == pch)
+      {
+         pch += 2;
+         ends = strstr(pch,"\r\n");
+      }
+
+      isOK = fp.DoesMatch(pch, (ends ? ends-pch : dwFileSize));
+
+      if(isOK)  break;
+
+      pch = ends ? ends+2 : nullptr;
+   }
+
+   assert(isOK); 
+   printf("assert#1 %s\n", ISOK(isOK));
+
+
+   pch = pchANSI, ends = pch;
+
+   fp.Reset("B237708F-6CFD-4972-9CE1-21AAF2B2E0A0");
+   isOK = false;
+
+   while (pch != NULL)
+   {
+      ends = strstr(pch,"\r\n");
+      while(ends == pch)
+      {
+         pch += 2;
+         ends = strstr(pch,"\r\n");
+      }
+
+      isOK = fp.DoesMatch(pch, (ends ? ends-pch : dwFileSize));
+
+      if(isOK)  break;
+
+      pch = ends ? ends+2 : nullptr;
+   }
+
+   assert(isOK); 
+   printf("assert#2 %s\n", ISOK(isOK));
+
+
+   pch = pchANSI, ends = pch;
+
+   fp.Reset("*98415C59*14AD-????-94D1*9551E3775C2C*");
+   isOK = false;
+
+   while (pch != NULL)
+   {
+      ends = strstr(pch,"\r\n");
+      while(ends == pch)
+      {
+         pch += 2;
+         ends = strstr(pch,"\r\n");
+      }
+
+      isOK = fp.DoesMatch(pch, (ends ? ends-pch : dwFileSize));
+
+      if(isOK)  break;
+
+      pch = ends ? ends+2 : nullptr;
+   }
+
+   assert(isOK); 
+   printf("assert#3 %s\n", ISOK(isOK));
+
+
+   pch = pchANSI, ends = pch;
+
+   fp.Reset("*98415C59-14AD-4A28-94D1??9551E3775C2C*");
+   isOK = false;
+
+   while (pch != NULL)
+   {
+      ends = strstr(pch,"\r\n");
+      while(ends == pch)
+      {
+         pch += 2;
+         ends = strstr(pch,"\r\n");
+      }
+
+      if(ends) break;
+
+      isOK = fp.DoesMatch(pch, ends-pch);
+
+      if(isOK)  break;
+
+      pch = ends ? ends+2 : nullptr;
+   }
+
+   assert(!isOK); 
+   printf("assert#4 %s\n", ISOK(!isOK));
+
+
+
+
+   //assert(feof(p_file));     
+
+   //fgets(line, max_line_size, pchANSI);
+
+
+   UnmapViewOfFile(pvFile);
+   CloseHandle(hFileMap);
+
+   // Remove trailing zero character added earlier.
+   //SetFilePointer(hFile, dwFileSize, NULL, FILE_BEGIN);
+   SetEndOfFile(hFile);
+   CloseHandle(hFile);
+
+   time_t end = time(nullptr);
+   printf("%ds elapsed\n", end-start);
+
+   printf("MapViewSearchingReleaseTest1 is OK\n");
+
+}
+
+#endif
 
 
 
@@ -648,13 +967,14 @@ void RunTests()
 
    FileSearchingTest1();
    FileSearchingTest2();
+   MapViewSearchingTest1();
 
 #endif
 
 #ifndef _DEBUG
 
    FileSearchingReleaseTest1();
-
+   MapViewSearchingReleaseTest1();
 #endif
 
 }

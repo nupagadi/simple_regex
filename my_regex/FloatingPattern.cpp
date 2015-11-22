@@ -111,7 +111,7 @@ const char* FloatingPattern::DoesMatch(const char* str, size_t str_len/* = 0*/)
    const char* pos = str + Offset();
    for(size_t i = 0; i < free_pat_num_; ++i)
    {
-      pos = free_aligned_[i].FindIn(pos, str_len - (str-pos) - Tail());
+      pos = free_aligned_[i].FindIn(pos, str_len - (pos-str) - Tail());
       if(!pos)  return nullptr;
       pos += free_aligned_[i].Length();
    }
