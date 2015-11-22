@@ -9,7 +9,7 @@ public:
    FloatingPattern() : left_aligned_(), right_aligned_(), free_aligned_(), string_pattern_(), min_length_(), free_pat_num_() {}
    bool Reset(const char* string_pattern);
 
-   const char* FindIn(const char* str, size_t len = 0);
+   const char* DoesMatch(const char* str, size_t len = 0);
 
    size_t MinLength() { return min_length_; }
    size_t Offset() { return left_aligned_ ? left_aligned_->Length() : 0; }

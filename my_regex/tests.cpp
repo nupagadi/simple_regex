@@ -1,12 +1,15 @@
-#ifdef _DEBUG 
 
 #include <cassert>
 #include <cstdio>
 #include <cstring>
+#include <ctime>
 
 #include "SolidPattern.h"
 #include "FloatingPattern.h"
 
+#define ISOK(b) (b ? "is OK" : "failed")
+
+#ifdef _DEBUG 
 
 void SolidPatternInitTest1()
 {
@@ -371,6 +374,13 @@ void FloatingPatternResetTest2()
    assert(fp.Offset() == 3);
    assert(fp.Tail() == 3);
 
+   fp.Reset("The?");
+   assert(fp.left_aligned_ != nullptr);
+   assert(fp.right_aligned_ == nullptr);
+   assert(fp.free_pat_num_ == 0);
+   assert(fp.Offset() == 4);
+   assert(fp.Tail() == 0);
+
    printf("FloatingPatternResetTest2 is OK\n");
 }
 
@@ -380,29 +390,29 @@ void FloatingPatternSearchTest1()
 
    my_regex::FloatingPattern fp;
    fp.Reset("The Boyer**");
-   const char* res = fp.FindIn(text, 30);
+   const char* res = fp.DoesMatch(text, 30);
    assert(res != nullptr);
    assert(res == text);
 
    fp.Reset("The?Boye?*er ?ule?");
    res = nullptr;
-   res = fp.FindIn(text);
+   res = fp.DoesMatch(text);
    assert(res != nullptr);
    assert(res == text);
 
    fp.Reset("he?Boye?*er ?ule?");
    res = nullptr;
-   res = fp.FindIn(text);
+   res = fp.DoesMatch(text);
    assert(res == nullptr);
 
    fp.Reset("The?Boye?*er ?ule");
    res = nullptr;
-   res = fp.FindIn(text);
+   res = fp.DoesMatch(text);
    assert(res == nullptr);
 
    fp.Reset("The Boyer*er rule?");
    res = nullptr;
-   res = fp.FindIn(text, strlen(text) -1);
+   res = fp.DoesMatch(text, strlen(text) -1);
    assert(res == nullptr);
    assert(res != text);
 
@@ -415,25 +425,202 @@ void FloatingPatternSearchTest2()
 
    my_regex::FloatingPattern fp;
    fp.Reset("The Boyer*algorithm*rule*");
-   const char* res = fp.FindIn(text);
+   const char* res = fp.DoesMatch(text);
    assert(res != nullptr);
    assert(res == text);
 
    fp.Reset("The Boyer*algorthm*rule*");
    res = nullptr;
-   res = fp.FindIn(text);
+   res = fp.DoesMatch(text);
    assert(res == nullptr);
 
-   fp.Reset("The Boyer*algor*thm*rule??");
+   fp.Reset("The Boyer*algor*thm*rule*");
    res = nullptr;
-   res = fp.FindIn(text);
+   res = fp.DoesMatch(text);
    assert(res != nullptr);
+
+   fp.Reset("The Boyer?");
+   res = nullptr;
+   res = fp.DoesMatch(text);
+   assert(res != nullptr);
+   assert(res == text);
 
    printf("FloatingPatternSearchTest2 is OK\n");
 }
 
+void FileSearchingTest1()
+{
+   const size_t max_line_size = 256*256;
+   FILE *p_file;
+   p_file = fopen("small_file.txt", "r");
+   assert(p_file);
+   char line[max_line_size];
+   fgets(line, max_line_size, p_file);
+   
+   my_regex::FloatingPattern fp;
+   fp.Reset("The");
+   bool isOK = fp.DoesMatch(line);
+   assert(isOK);
 
+   fp.Reset("The Boyer*algorthm*rule*");
+   isOK = fp.DoesMatch(line);
+   assert(!isOK);
+
+   fp.Reset("The Boyer*algor*thm**");
+   isOK = fp.DoesMatch(line);
+   assert(isOK);
+
+   fclose(p_file);
+
+   printf("FileSearchingTest1 is OK\n");
+}
+
+void FileSearchingTest2()
+{
+   const size_t max_line_size = 256*256;
+   FILE *p_file;
+   p_file = fopen("small_file.txt", "r");
+   assert(p_file);
+   char line[max_line_size];
+
+   bool isOK = false;
+   my_regex::FloatingPattern fp;
+   fp.Reset("*shift*,*P**");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(isOK);     
+   assert(feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("?ore*=*moving*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(isOK);     
+   assert(!feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("**********************k********************************=******************************n*************************");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(isOK);     
+   assert(!feof(p_file));     
+
+
+   fp.Reset("*k??=??n*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   assert(!isOK);     
+   assert(feof(p_file));     
+
+
+   fclose(p_file);
+
+   printf("FileSearchingTest2 is OK\n");
+}
 #endif
+
+void FileSearchingReleaseTest1()
+{
+   time_t start = time(nullptr);
+
+   const size_t max_line_size = 256*256;
+   FILE *p_file;
+   p_file = fopen("animals.txt", "r");
+   assert(p_file);
+   char line[max_line_size];
+   bool isOK = false;
+   my_regex::FloatingPattern fp;
+
+
+   fp.Reset("B237708F-6CFD-4972-9CE1-21AAF2B2E0A0");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   printf("assert#1 %s\n", ISOK(isOK));
+   assert(isOK);     
+   assert(feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("*98415C59-14AD-4A28-94D1-9551E3775C2C*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   printf("assert#2 %s\n", ISOK(isOK));
+   assert(isOK);     
+   assert(!feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("*98415C59*14AD-????-94D1*9551E3775C2C*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   printf("assert#3 %s\n", ISOK(isOK));
+   assert(isOK);     
+   assert(!feof(p_file));     
+
+
+   rewind(p_file);
+
+
+   fp.Reset("*98415C59-14AD-4A28-94D1??9551E3775C2C*");
+   do {
+      fgets(line, max_line_size, p_file);
+      isOK = fp.DoesMatch(line);
+   } 
+   while(!isOK && !feof(p_file));
+
+   printf("assert#4 %s\n", ISOK(!isOK));
+   assert(!isOK);     
+   assert(feof(p_file));     
+
+
+   time_t end = time(nullptr);
+   printf("%ds elapsed\n", end-start);
+
+
+   printf("FileSearchingReleaseTest1 is OK\n");
+}
+
+
+
+
 
 
 
@@ -458,7 +645,12 @@ void RunTests()
    FloatingPatternSearchTest1();
    FloatingPatternSearchTest2();
 
+   FileSearchingTest1();
+   FileSearchingTest2();
+
 #endif
+
+   FileSearchingReleaseTest1();
 
 }
 

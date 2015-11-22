@@ -27,8 +27,8 @@ bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
    size_t q_mark_num = 0;
    for(const char* pos = pattern_; *pos; q_mark_num += (*pos++=='?') );
 
-   // ћаксимально возможное количество участков, разделенных '?'
-   // например, в zxc??xs????sdd? три таких участка
+   // Max possible section num, separated by '?'
+   // e.g., there are 3 in zxc??xs????sdd?
    size_t max_elem_num = min(q_mark_num + 1, length_ - q_mark_num);
 
    if(!max_elem_num)
@@ -36,10 +36,10 @@ bool SolidPattern::Reset(const char* source, size_t len /*= 0*/)
 
    //return false OPERATION!!!!!!!!!!
 
-   // Ќачала этих участков
+   // Beginnings of the sections
    size_t* starts = new (std::nothrow) size_t[max_elem_num];
    if(!starts)  return false;
-   // ƒлины этих участков
+   // Lengths of the sections
    size_t* lens = new (std::nothrow) size_t[max_elem_num];
    if(!lens)  return false;
 

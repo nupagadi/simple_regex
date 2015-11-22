@@ -30,9 +30,12 @@ bool FloatingPattern::Reset(const char* string_pattern)
       *to++ = *from++;
    }
    *to = '\0';
-   free_pat_num_ = asterisk_num-1;
+   free_pat_num_ = asterisk_num ? asterisk_num-1 : 0;
+   assert(free_pat_num_ >= 0);
 
    min_length_ = strlen(string_pattern_);
+   if(string_pattern_[0] == '*')  --min_length_;
+   if(string_pattern_[strlen(string_pattern_)-1] == '*')  --min_length_;
 
    delete left_aligned_;  left_aligned_ = nullptr;
    if(string_pattern_[0] != '*')
@@ -40,15 +43,13 @@ bool FloatingPattern::Reset(const char* string_pattern)
       left_aligned_ = new (std::nothrow) SolidPattern;
       if(!left_aligned_) { free(); return false; }
    }  
-   else --min_length_;
 
    delete right_aligned_;  right_aligned_ = nullptr;
-   if(string_pattern_[strlen(string_pattern_)-1] != '*' && strlen(string_pattern_)>1)
+   if(string_pattern_[strlen(string_pattern_)-1] != '*' && asterisk_num)
    {
       right_aligned_ = new (std::nothrow) SolidPattern;
       if(!right_aligned_) { free(); return false; }
    }
-   else --min_length_;
 
    if(!strcmp(string_pattern_, "*"))  min_length_ = 0;
 
@@ -66,7 +67,7 @@ bool FloatingPattern::Reset(const char* string_pattern)
       if(!pos) pos = prev;  // so (pos-prev) == 0
       left_aligned_->Reset(prev, pos-prev);
    }
-   assert(asterisk_num && *pos == '*');
+   assert(!asterisk_num || *pos == '*');
    for(size_t i = 0; i < free_pat_num_; ++i)
    {
       prev = ++pos;
@@ -74,7 +75,7 @@ bool FloatingPattern::Reset(const char* string_pattern)
       if(!pos) pos = prev;  // so (pos-prev) == 0
       free_aligned_[i].Reset(prev, pos-prev);
    }
-   assert(asterisk_num && *pos == '*');
+   assert(!asterisk_num || *pos == '*');
    if(right_aligned_)
    {
       prev = ++pos;
@@ -86,7 +87,7 @@ bool FloatingPattern::Reset(const char* string_pattern)
    return true;
 }
 
-const char* FloatingPattern::FindIn(const char* str, size_t str_len/* = 0*/)
+const char* FloatingPattern::DoesMatch(const char* str, size_t str_len/* = 0*/)
 {
    if (!str_len)   str_len = strlen(str);
    if (str_len < min_length_) return nullptr;
