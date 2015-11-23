@@ -11,7 +11,7 @@ namespace my_regex
 {
 
 
-bool BM_Searcher::Reset(const char *pat, uint32_t patlen)
+bool BM_Searcher::Reset(const char *pat, size_t patlen)
 {
    free();
    pat_ = pat;  patlen_ = patlen;
@@ -24,7 +24,7 @@ bool BM_Searcher::Reset(const char *pat, uint32_t patlen)
    return true;
 }
 
-const char* BM_Searcher::FindIn(const char *string, uint32_t stringlen)
+const char* BM_Searcher::FindIn(const char *string, size_t stringlen)
 {
    return boyer_moore(string, stringlen, pat_, patlen_, delta1_, delta2_);
 }

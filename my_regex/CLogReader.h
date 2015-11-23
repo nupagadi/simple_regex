@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 namespace my_regex
 {
 class FloatingPattern;
@@ -22,7 +24,7 @@ private:
    PSTR p_file_;
 
    FloatingPattern* pattern_;
-   const char *position_;     // указатель текущей строки, обнуляется в SetFilter; для GetNextLine
+   const char *position_;     // указатель текущей строки, в SetFilter устанавливается на начало файла; для GetNextLine
 
    void free_file();
 };
