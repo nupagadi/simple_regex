@@ -6,6 +6,8 @@
 
 void RunTests();
 
+#ifndef _DEBUG 
+
 int main(int argc,  char** argv)
 {
    if (argc != 3) {
@@ -47,5 +49,11 @@ int main(int argc,  char** argv)
 
    return EXIT_SUCCESS;
 
-   //    RunTests();
 }
+#else
+
+int main()
+{
+    RunTests();
+}
+#endif

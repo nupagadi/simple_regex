@@ -403,6 +403,11 @@ void FloatingPatternSearchTest1()
    assert(res != nullptr);
    assert(res == text);
 
+   fp.Reset("The");
+   res = nullptr;
+   res = fp.DoesMatch(text);
+   assert(res == nullptr);
+
    fp.Reset("The?Boye?*er ?ule?");
    res = nullptr;
    res = fp.DoesMatch(text);
@@ -451,8 +456,7 @@ void FloatingPatternSearchTest2()
    fp.Reset("The Boyer?");
    res = nullptr;
    res = fp.DoesMatch(text);
-   assert(res != nullptr);
-   assert(res == text);
+   assert(res == nullptr);
 
    printf("FloatingPatternSearchTest2 is OK\n");
 }
@@ -469,7 +473,7 @@ void FileSearchingTest1()
    my_regex::FloatingPattern fp;
    fp.Reset("The");
    bool isOK = fp.DoesMatch(line);
-   assert(isOK);
+   assert(!isOK);
 
    fp.Reset("The Boyer*algorthm*rule*");
    isOK = fp.DoesMatch(line);
