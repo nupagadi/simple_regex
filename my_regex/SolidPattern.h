@@ -7,6 +7,17 @@ namespace my_regex
 
 class BM_Searcher;
 
+// interface
+class ISolidPattern
+{
+public:
+   virtual ~ISolidPattern(){}
+   virtual bool Reset(const char* source, size_t len = 0) = 0;
+   virtual bool IsEqual(const char* str, size_t str_len) const = 0;
+   virtual size_t Length() const = 0;
+   virtual const char* FindIn(const char* str, size_t len = 0) const = 0;
+};
+
 // set of letters only, with its length and offset of '?'
 class SolidPatternAtom
 {
@@ -26,17 +37,6 @@ private:
    // non-copyable
    SolidPatternAtom(const SolidPatternAtom&);
    SolidPatternAtom& operator=(const SolidPatternAtom&);
-};
-
-
-class ISolidPattern
-{
-public:
-   virtual ~ISolidPattern(){}
-   virtual bool Reset(const char* source, size_t len = 0) = 0;
-   virtual bool IsEqual(const char* str, size_t str_len) const = 0;
-   virtual size_t Length() const = 0;
-   virtual const char* FindIn(const char* str, size_t len = 0) const = 0;
 };
 
 // set of SolidPatternAtom and distances between them
