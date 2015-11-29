@@ -48,7 +48,7 @@ void CLogReader::Close()
 
 bool CLogReader::SetFilter(const char *filter)
 {
-   position_ = nullptr;
+   position_ = p_file_;
    if(!pattern_)  pattern_ = new (std::nothrow) FloatingPattern;
    if(!pattern_)  return false;
 
@@ -59,7 +59,8 @@ bool CLogReader::SetFilter(const char *filter)
 
 bool CLogReader::GetNextLine(char *buf, const int bufsize)
 {
-   if(!position_)  position_ = p_file_;
+   if(!pattern_)  return false;
+   if(!position_)  { position_ = p_file_; return false; }
 
    const char *ends = position_;   // end of current string
 
@@ -67,27 +68,30 @@ bool CLogReader::GetNextLine(char *buf, const int bufsize)
    {
       // seek for the end of line
       ends = strstr(position_,"\r\n");
-      // in case of "\r\n\r\n"
-      while(ends == position_)
-      {
-         position_ += 2;
-         ends = strstr(position_,"\r\n");
-      }
 
       if(pattern_->DoesMatch(position_, (ends ? ends-position_ : dw_file_size_ - (position_-p_file_))))
          break;
 
       // skipping "\r\n"
-      position_ = ends ? ends+2 : nullptr;
+      // asserting (ends[0] == '\r' && ends[1] == '\n')
+      while (ends && ends[0] == '\r' && ends[1] == '\n') {
+         // in case of "\r\n\r\n"
+         ends += 2;
+      }
+      position_ = ends;
    }
 
    if(!position_) return false;
 
    // till the end of line or bufsize
-   size_t chars_to_copy = min((ends ? ends-position_ : dw_file_size_ - (position_-p_file_)), bufsize);
+   size_t chars_to_copy = min((ends ? ends-position_ : dw_file_size_ - (position_-p_file_)), bufsize-1);
 
    strncpy(buf, position_, chars_to_copy);
+   buf[chars_to_copy] = '\0';
 
+   while (ends && ends[0] == '\r' && ends[1] == '\n') {
+      ends += 2;
+   }
    position_ = ends;
 
    return true;

@@ -98,6 +98,9 @@ const char* FloatingPattern::DoesMatch(const char* str, size_t str_len/* = 0*/)
 
    if(left_aligned_)
    {
+      // "qwerty" or "qwerty?" or "qwe?rty" case (left aligned and no '*')
+      if(!right_aligned_ && !free_pat_num_ && string_pattern_[min_length_] != '*' && str_len != min_length_)
+         return nullptr;
       if(!left_aligned_->IsEqual(str, left_aligned_->Length()))
          return nullptr;
    }

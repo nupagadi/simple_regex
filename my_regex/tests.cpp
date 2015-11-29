@@ -403,6 +403,11 @@ void FloatingPatternSearchTest1()
    assert(res != nullptr);
    assert(res == text);
 
+   fp.Reset("The");
+   res = nullptr;
+   res = fp.DoesMatch(text);
+   assert(res == nullptr);
+
    fp.Reset("The?Boye?*er ?ule?");
    res = nullptr;
    res = fp.DoesMatch(text);
@@ -451,8 +456,7 @@ void FloatingPatternSearchTest2()
    fp.Reset("The Boyer?");
    res = nullptr;
    res = fp.DoesMatch(text);
-   assert(res != nullptr);
-   assert(res == text);
+   assert(res == nullptr);
 
    printf("FloatingPatternSearchTest2 is OK\n");
 }
@@ -469,7 +473,7 @@ void FileSearchingTest1()
    my_regex::FloatingPattern fp;
    fp.Reset("The");
    bool isOK = fp.DoesMatch(line);
-   assert(isOK);
+   assert(!isOK);
 
    fp.Reset("The Boyer*algorthm*rule*");
    isOK = fp.DoesMatch(line);
@@ -772,7 +776,7 @@ void MapViewSearchingReleaseTest1()
 
    time_t start = time(nullptr);
 
-   HANDLE hFile = CreateFile(L"animals.txt", GENERIC_READ, 0, 
+   HANDLE hFile = CreateFile(L"big_file.txt", GENERIC_READ, 0, 
       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
    if (hFile == INVALID_HANDLE_VALUE) {
@@ -939,6 +943,7 @@ void MapViewSearchingReleaseTest1()
    printf("MapViewSearchingReleaseTest1 is OK\n");
 
 }
+#endif
 
 void CLogReaderTest1()
 {
@@ -948,7 +953,7 @@ void CLogReaderTest1()
    time_t start = time(nullptr);
 
    my_regex::CLogReader log_reader;
-   if(!log_reader.Open("animals.txt"))
+   if(!log_reader.Open("big_file.txt"))
       printf("Error opening file\n");
 
 
@@ -959,7 +964,7 @@ void CLogReaderTest1()
       printf("line: %s\n", buffer);
    }
 
-
+   
    log_reader.SetFilter("*98415C59-14AD-4A28-94D1-9551E3775C2C*");
 
    while(log_reader.GetNextLine(buffer, max_line_size))
@@ -982,7 +987,7 @@ void CLogReaderTest1()
    {
       printf("line: %s\n", buffer);
    }
-
+   
    time_t end = time(nullptr);
    printf("%ds elapsed\n", end-start);
 
@@ -991,7 +996,6 @@ void CLogReaderTest1()
    printf("CLogReaderTest1 is OK\n");
 }
 
-#endif
 
 
 
@@ -1026,9 +1030,9 @@ void RunTests()
 #ifndef _DEBUG
 
    //FileSearchingReleaseTest1();
-   MapViewSearchingReleaseTest1();
-   CLogReaderTest1();
+//    MapViewSearchingReleaseTest1();
 #endif
+   CLogReaderTest1();
 
 }
 

@@ -130,10 +130,10 @@ const char* SolidPattern::FindIn(const char* str, size_t str_len /*= 0*/) const
             // TUNE BM!!!!!!!!!!!!!!!!!
 bool SolidPattern::IsEqual(const char* str, size_t str_len) const
 {
-   if (str_len < length_) return nullptr;
+   if (str_len != length_) return nullptr;
    // "????"-like pattern
    if (!atoms_num_)  return str;
-   if(strncmp(str + offset_, p_atoms_[0].str(), p_atoms_[0].len()))
+   if(/*str[!p_atoms_[0].len()] || */strncmp(str + offset_, p_atoms_[0].str(), p_atoms_[0].len()))
       return false;
    return isEqualPastTheFirst(str);
 }
