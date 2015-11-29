@@ -21,7 +21,10 @@
 
 #ifdef _DEBUG 
 
-void SolidPatternInitTest1()
+struct DebugTest
+{
+
+static void SolidPatternInitTest1()
 {
    char* text = "The Boyer–Moore–Horspool? algorithm is a simplification of the?? ???Boyer–Moore algorithm using only the bad character rule.";
    my_regex::SolidPattern fpat;
@@ -67,7 +70,7 @@ void SolidPatternInitTest1()
 
    printf("SolidPatternInitTest1 is OK\n");
 }
-void SolidPatternInitTest2()
+static void SolidPatternInitTest2()
 {
    char* text = "?????The Boyer–Moore–Horspool? algorithm is a simplification of the? Boyer–Moore algorithm using only the bad character rule.";
    my_regex::SolidPattern fpat;
@@ -106,7 +109,7 @@ void SolidPatternInitTest2()
 
    printf("SolidPatternInitTest2 is OK\n");
 }
-void SolidPatternInitTest3()
+static void SolidPatternInitTest3()
 {
    char* text = "The Boyer–Moore–Horspool? algorithm is a simplification of the? Boyer–Moore algorithm using only the bad character rule.???";
    my_regex::SolidPattern fpat;
@@ -118,7 +121,7 @@ void SolidPatternInitTest3()
    printf("SolidPatternInitTest3 is OK\n");
 }
 
-void SolidPatternInitTest4()
+static void SolidPatternInitTest4()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
    my_regex::SolidPattern fpat;
@@ -142,7 +145,7 @@ void SolidPatternInitTest4()
    printf("SolidPatternInitTest4 is OK\n");
 }
 
-void SolidPatternInitTest5()
+static void SolidPatternInitTest5()
 {
    const char* text = "Boyer";
    my_regex::SolidPattern fpat;
@@ -179,7 +182,7 @@ void SolidPatternInitTest5()
    printf("SolidPatternInitTest5 is OK\n");
 }
 
-void SolidPatternSearchTest1()
+static void SolidPatternSearchTest1()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
@@ -209,7 +212,7 @@ void SolidPatternSearchTest1()
    printf("SolidPatternSearchTest1 is OK\n");
 }
 
-void SolidPatternSearchTest2()
+static void SolidPatternSearchTest2()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
@@ -233,7 +236,7 @@ void SolidPatternSearchTest2()
    printf("SolidPatternSearchTest2 is OK\n");
 }
 
-void SolidPatternSearchTest3()
+static void SolidPatternSearchTest3()
 {
    char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
@@ -306,7 +309,7 @@ void SolidPatternSearchTest3()
    printf("SolidPatternSearchTest3 is OK\n");
 }
 
-void FloatingPatternResetTest1()
+static void FloatingPatternResetTest1()
 {
    my_regex::FloatingPattern fp;
    fp.Reset("*qwe*asd*zxc*");
@@ -340,7 +343,7 @@ void FloatingPatternResetTest1()
    printf("FloatingPatternResetTest1 is OK\n");
 }
 
-void FloatingPatternResetTest2()
+static void FloatingPatternResetTest2()
 {
    my_regex::FloatingPattern fp;
    fp.Reset("*qwe*asd*zxc*");
@@ -393,7 +396,7 @@ void FloatingPatternResetTest2()
    printf("FloatingPatternResetTest2 is OK\n");
 }
 
-void FloatingPatternSearchTest1()
+static void FloatingPatternSearchTest1()
 {
    const char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
@@ -433,7 +436,7 @@ void FloatingPatternSearchTest1()
    printf("FloatingPatternSearchTest1 is OK\n");
 }
 
-void FloatingPatternSearchTest2()
+static void FloatingPatternSearchTest2()
 {
    const char* text = "The Boyer–Moore–Horspool algorithm is a simplification of the Boyer–Moore algorithm using only the bad character rule.";
 
@@ -461,7 +464,7 @@ void FloatingPatternSearchTest2()
    printf("FloatingPatternSearchTest2 is OK\n");
 }
 
-void FileSearchingTest1()
+static void FileSearchingTest1()
 {
    const size_t max_line_size = 256*256;
    FILE *p_file;
@@ -488,7 +491,7 @@ void FileSearchingTest1()
    printf("FileSearchingTest1 is OK\n");
 }
 
-void FileSearchingTest2()
+static void FileSearchingTest2()
 {
    const size_t max_line_size = 256*256;
    FILE *p_file;
@@ -552,7 +555,7 @@ void FileSearchingTest2()
 
    printf("FileSearchingTest2 is OK\n");
 }
-void MapViewSearchingTest1()
+static void MapViewSearchingTest1()
 {
    const size_t max_line_size = 256*256;
 
@@ -683,7 +686,7 @@ void MapViewSearchingTest1()
    printf("MapViewSearchingTest1 is OK\n");
 }
 
-
+}; // class DebugTest
 
 #endif
 
@@ -1004,26 +1007,25 @@ void RunTests()
 {
 
 #ifdef _DEBUG 
+   DebugTest::SolidPatternInitTest1();
+   DebugTest::SolidPatternInitTest2();
+   DebugTest::SolidPatternInitTest3();
+   DebugTest::SolidPatternInitTest4();
+   DebugTest::SolidPatternInitTest5();
 
-   SolidPatternInitTest1();
-   SolidPatternInitTest2();
-   SolidPatternInitTest3();
-   SolidPatternInitTest4();
-   SolidPatternInitTest5();
+   DebugTest::SolidPatternSearchTest1();
+   DebugTest::SolidPatternSearchTest2();
+   DebugTest::SolidPatternSearchTest3();
 
-   SolidPatternSearchTest1();
-   SolidPatternSearchTest2();
-   SolidPatternSearchTest3();
+   DebugTest::FloatingPatternResetTest1();
+   DebugTest::FloatingPatternResetTest2();
 
-   FloatingPatternResetTest1();
-   FloatingPatternResetTest2();
+   DebugTest::FloatingPatternSearchTest1();
+   DebugTest::FloatingPatternSearchTest2();
 
-   FloatingPatternSearchTest1();
-   FloatingPatternSearchTest2();
-
-   FileSearchingTest1();
-   FileSearchingTest2();
-   MapViewSearchingTest1();
+   DebugTest::FileSearchingTest1();
+   DebugTest::FileSearchingTest2();
+   DebugTest::MapViewSearchingTest1();
 
 #endif
 

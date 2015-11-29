@@ -2,6 +2,8 @@
 
 #include "SolidPattern.h"
 
+class DebugTest;
+
 namespace my_regex
 {
 
@@ -28,9 +30,9 @@ public:
 
 private:
 
-#ifdef _DEBUG 
-public:
-#endif
+//#ifdef _DEBUG 
+//public:
+//#endif
 
    SolidPattern *left_aligned_, *right_aligned_;
    SolidPattern* free_aligned_; // array
@@ -40,6 +42,10 @@ public:
    size_t free_pat_num_;
 
    void free();
+
+#ifdef _DEBUG 
+   friend class DebugTest;
+#endif
 };
 
 }  // namespace my_regex
