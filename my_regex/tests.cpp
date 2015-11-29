@@ -21,8 +21,17 @@
 
 #ifdef _DEBUG 
 
+const char* boyer_moore (const char *string, size_t stringlen, const char *pat, size_t patlen);
+
 struct DebugTest
 {
+static void BMTest()
+{
+   const char* string = "abedefgabedefgabedefg";
+   const char* pat = "abcdefg";
+   const char* pos = boyer_moore(string, 21, pat, 7);
+   printf("BMTest is OK\n");
+}
 
 static void SolidPatternInitTest1()
 {
@@ -1007,6 +1016,7 @@ void RunTests()
 {
 
 #ifdef _DEBUG 
+   DebugTest::BMTest();
    DebugTest::SolidPatternInitTest1();
    DebugTest::SolidPatternInitTest2();
    DebugTest::SolidPatternInitTest3();
