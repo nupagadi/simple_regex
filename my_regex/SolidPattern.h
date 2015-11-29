@@ -28,7 +28,20 @@ private:
    SolidPatternAtom& operator=(const SolidPatternAtom&);
 };
 
-class SolidPattern
+
+class ISolidPattern
+{
+public:
+   virtual ~ISolidPattern(){}
+   virtual bool Reset(const char* source, size_t len = 0) = 0;
+   virtual bool IsEqual(const char* str, size_t str_len) const = 0;
+   virtual size_t Length() const = 0;
+   virtual const char* FindIn(const char* str, size_t len = 0) const = 0;
+};
+
+// set of SolidPatternAtom and distances between them
+// pattern of letters and '?' (excluding '*')
+class SolidPattern : public ISolidPattern
 {
 public:
    SolidPattern() : atoms_num_(), p_atoms_(), tail_len_(), offset_(), length_(), pattern_(), searcher_() {}

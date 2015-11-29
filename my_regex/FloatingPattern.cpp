@@ -10,7 +10,7 @@ namespace my_regex
 
 bool FloatingPattern::Reset(const char* string_pattern)
 {
-   min_length_ = 0;
+   free();
 
    size_t len = strlen(string_pattern);
 
@@ -33,9 +33,9 @@ bool FloatingPattern::Reset(const char* string_pattern)
    free_pat_num_ = asterisk_num ? asterisk_num-1 : 0;
    assert(free_pat_num_ >= 0);
 
-   min_length_ = strlen(string_pattern_);
-   if(string_pattern_[0] == '*')  --min_length_;
-   if(string_pattern_[strlen(string_pattern_)-1] == '*')  --min_length_;
+   min_length_ = strlen(string_pattern_) - asterisk_num;
+   //if(string_pattern_[0] == '*')  --min_length_;
+   //if(string_pattern_[strlen(string_pattern_)-1] == '*')  --min_length_;
 
    delete left_aligned_;  left_aligned_ = nullptr;
    if(string_pattern_[0] != '*')
@@ -51,10 +51,14 @@ bool FloatingPattern::Reset(const char* string_pattern)
       if(!right_aligned_) { free(); return false; }
    }
 
-   if(!strcmp(string_pattern_, "*"))  min_length_ = 0;
+   //if(!strcmp(string_pattern_, "*"))  min_length_ = 0;
 
-   delete [] free_aligned_;  free_aligned_ = nullptr;
-   free_aligned_ = new (std::nothrow) SolidPattern[free_pat_num_];
+   assert(!free_aligned_);
+   free_aligned_ = new (std::nothrow) ISolidPattern*[free_pat_num_];
+   for(size_t i = 0; i < free_pat_num_; ++i) {
+      free_aligned_[i] = new (std::nothrow) SolidPattern;
+      if(!free_aligned_[i]) { free(); return false; }
+   }
    if(!free_aligned_) { free(); return false; }
 
    
@@ -74,7 +78,7 @@ bool FloatingPattern::Reset(const char* string_pattern)
       prev = ++pos;
       pos = strchr(pos, '*');
       if(!pos) pos = prev;  // so (pos-prev) == 0
-      if(!free_aligned_[i].Reset(prev, pos-prev))
+      if(!free_aligned_[i]->Reset(prev, pos-prev))
       { free(); return false; }
    }
    assert(!asterisk_num || *pos == '*');
@@ -114,9 +118,9 @@ const char* FloatingPattern::DoesMatch(const char* str, size_t str_len/* = 0*/)
    const char* pos = str + Offset();
    for(size_t i = 0; i < free_pat_num_; ++i)
    {
-      pos = free_aligned_[i].FindIn(pos, str_len - (pos-str) - Tail());
+      pos = free_aligned_[i]->FindIn(pos, str_len - (pos-str) - Tail());
       if(!pos)  return nullptr;
-      pos += free_aligned_[i].Length();
+      pos += free_aligned_[i]->Length();
    }
 
    return str;
@@ -125,12 +129,15 @@ const char* FloatingPattern::DoesMatch(const char* str, size_t str_len/* = 0*/)
 
 void FloatingPattern::free()
 {
+   for(size_t i = 0; i < free_pat_num_; ++i)
+      delete free_aligned_[i];
+   delete [] free_aligned_;  free_aligned_ = nullptr;   
+
+   delete left_aligned_;   delete right_aligned_;     
+   left_aligned_ = right_aligned_ = nullptr;
+   delete [] string_pattern_;  string_pattern_ = nullptr;
+
    min_length_ = free_pat_num_ = 0;
-   if(!left_aligned_)  delete left_aligned_;  
-   if(!right_aligned_)  delete right_aligned_;     
-   delete [] free_aligned_;  delete [] string_pattern_; 
-   left_aligned_ = right_aligned_ = free_aligned_ = nullptr;
-   string_pattern_ = nullptr;
 }
 
 

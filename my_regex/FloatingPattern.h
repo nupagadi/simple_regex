@@ -7,6 +7,7 @@ class DebugTest;
 namespace my_regex
 {
 
+class ISolidPattern;
 class SolidPattern;
 
 // pattern consists of SolidPattern instances, may contain '*'
@@ -29,13 +30,8 @@ public:
    ~FloatingPattern() { free(); }
 
 private:
-
-//#ifdef _DEBUG 
-//public:
-//#endif
-
-   SolidPattern *left_aligned_, *right_aligned_;
-   SolidPattern* free_aligned_; // array
+   ISolidPattern *left_aligned_, *right_aligned_;
+   ISolidPattern** free_aligned_; // array
    char* string_pattern_;
 
    size_t min_length_;

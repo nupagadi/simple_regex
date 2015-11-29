@@ -1,17 +1,9 @@
-
 #include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
 
-//#include "CmnHdr.h"
-//#include <windowsx.h>
-//#include <tchar.h>
-//#include <commdlg.h>
-//#include <cstring>
-//#include "Resource.h"
 #include <Windows.h>
-
 
 #include "SolidPattern.h"
 #include "FloatingPattern.h"
@@ -31,6 +23,8 @@ static void BMTest()
    const char* string = "abedefgabedefgabedefg";
    const char* pat = "abcdefg";
    const char* pos = boyer_moore(string, 21, pat, 7);
+   assert(!pos);
+
    printf("BMTest is OK\n");
 }
 
@@ -327,14 +321,14 @@ static void FloatingPatternResetTest1()
    fp.ToString(&str_pattern);
    assert(str_pattern != nullptr);
    assert(strlen(str_pattern) == 13);
-   assert(fp.MinLength() == 11);
+   assert(fp.MinLength() == 9);
 
    fp.Reset("***qwe****asd**zxc*");
    str_pattern = nullptr;
    fp.ToString(&str_pattern);
    assert(str_pattern != nullptr);
    assert(strlen(str_pattern) == 13);
-   assert(fp.MinLength() == 11);
+   assert(fp.MinLength() == 9);
    assert(str_pattern[0] == '*');
    assert(str_pattern[3] != '*');
    assert(str_pattern[4] == '*');
