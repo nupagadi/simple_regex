@@ -32,7 +32,7 @@ int is_prefix(const char *word, int wordlen, int pos) {
    int suffixlen = wordlen - pos;
    // could also use the strncmp() library function here
    for (i = 0; i < suffixlen; i++) {
-      if (word[i] != word[pos+i]) {
+      if (word[i] != word[pos+i]) {    // functor goes here
          return 0;
       }
    }
@@ -45,7 +45,7 @@ int suffix_length(const char *word, int wordlen, int pos) {
    int i;
    // increment suffix length i to the first mismatch or beginning
    // of the word
-   for (i = 0; (word[pos-i] == word[wordlen-1-i]) && (i < pos); i++);
+   for (i = 0; (word[pos-i] == word[wordlen-1-i]) && (i < pos); i++);   // functor goes here
    return i;
 }
 
@@ -99,13 +99,14 @@ void make_delta2(int *delta2, const char *pat, size_t patlen) {
    // second loop
    for (p=0; p < patlen-1; p++) {
       int slen = suffix_length(pat, patlen, p);
-      if (pat[p - slen] != pat[patlen-1 - slen]) {
+      if (pat[p - slen] != pat[patlen-1 - slen]) {   // functor goes here
          delta2[patlen-1 - slen] = patlen-1 - p + slen;
       }
    }
 }
 
-const char* boyer_moore (const char *string, size_t stringlen, const char *pat, size_t patlen) {
+template<class SYMBOL>
+const char* boyer_moore (const char *string, size_t stringlen, const SYMBOL *pat, size_t patlen) {
    int i;
    int delta1[ALPHABET_LEN];
    int *delta2 = (int *)malloc(patlen * sizeof(int));
@@ -132,6 +133,9 @@ const char* boyer_moore (const char *string, size_t stringlen, const char *pat, 
    free(delta2);
    return NULL;
 }
+
+template
+const char* boyer_moore<char> (const char *string, size_t stringlen, const char *pat, size_t patlen);
 
 const char* boyer_moore(const char *string, size_t stringlen, const char *pat, size_t patlen, int* delta1, int* delta2) 
 {

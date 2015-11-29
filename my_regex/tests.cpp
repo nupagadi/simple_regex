@@ -21,7 +21,8 @@
 
 #ifdef _DEBUG 
 
-const char* boyer_moore (const char *string, size_t stringlen, const char *pat, size_t patlen);
+template<class SYMBOL>
+const char* boyer_moore (const char *string, size_t stringlen, const SYMBOL *pat, size_t patlen);
 
 struct DebugTest
 {
